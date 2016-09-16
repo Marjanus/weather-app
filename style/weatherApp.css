@@ -1,0 +1,61 @@
+html, body {
+	text-align: center;
+	font-family: Arial, Helvetica, sans-serif;
+	height: 100%;
+	min-height: 100%;
+	padding-bottom: 60px;
+}
+
+
+#titleText {
+	font-family: 'Merriweather', serif;
+}
+
+.textInputs{
+	border-radius: 5px;
+	border: 1px #7A7D8E solid;
+}
+
+.help-block{
+	color: black;
+}
+
+#currentWeather{
+	border-top: 2px #E9F1F1 solid;
+	border-bottom: 2px #E9F1F1 solid;
+	padding-bottom: 1em;
+}
+
+#forecastText {
+	padding-top: 1em;
+}
+
+.greetingsParagraph {
+	line-height: 1.5;
+	padding: 0 2em;
+}
+
+.forecastItem {
+	background-color: #E9F8F8;
+	border: 2px white solid;
+}
+
+.weatherForecast{
+	padding-bottom: 60px;
+}
+
+#moreResultsButton {
+	margin: 3em 0;
+}
+
+#footerHR{
+	width: 50%;
+}
+
+.hidden {
+	display: none;
+}
+
+
+
+
