@@ -109,11 +109,13 @@
 					+ "<br /><img src='" + currentWeather.icon + "'> <br />" 
 					+ currentWeather.weather
 				);
+				
+				var httpsIconUrl = "";
 
 				// shows short term forecast
 				for ( var i = 0; i < shortTermForecastItems; i++ ){
 
-					var httpsIconUrl = "https" + shortTermForecast.resultsBase[i]["icon_url"].slice(4);
+					httpsIconUrl = "https" + shortTermForecast.resultsBase[i]["icon_url"].slice(4);
 
 					$forecastResults.append(
 						"<li class='" + forecastLayout + "'><strong>" 	
@@ -180,7 +182,7 @@
 				"<li class='" + forecastLayout + "'><strong>" 
 				+ shortTermForecast.name + "</strong><br />" 
 				+ longTermForecast.dayName[i]["title"] 
-				+ "<br /><img src='" + longTermForecast.dayName[i]["icon_url"] + "'><br />"
+				+ "<br /><img src='" + httpsIconUrl + "'><br />"
 				+ temperature + celsiusSymbol + "</li>"
 				);
 		}
