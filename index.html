@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Weather App</title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<link rel="stylesheet" href="style/weatherApp.css">
+		<link href="https://fonts.googleapis.com/css?family=Merriweather" rel="stylesheet">
+	</head>
+	<body>
+		<div class="col-xs-12 well searchForm">
+			<h1 id="titleText">Weather Forecast</h1>
+			<div class="form-group">
+				<input type="text" placeholder="City name" class="textInputs" id="cityInput" />
+				<input type="text" placeholder="Country / state name" class="textInputs" id="countryInput" />
+				<span class="help-block"> While searching in the USA, please provide a state name.</span>
+				<button class="btn btn-default" type="button" id="submitButton">Show</button>
+			</div>
+		</div>
+		<div class="container col-xs-10 col-xs-offset-1"> 		
+			<div class="row">
+				<div class=" col-md-4 col-md-push-8" id="currentWeatherDiv">
+					<h2>Current weather in: </h2>
+					<p id="currentWeather">loading..</p>
+				</div> 	
+				<div class="col-md-8 col-md-pull-4 weatherForecast">
+					<div id="forecastText">
+						<h2>Welcome to the Weather forecast application!</h2><br />
+						<p class="greetingsParagraph">This application provides information about current weather conditions and a short-term forecast for a selected city. </p>
+					</div>
+					<div id="forecastResults">
+						<ul class="list-inline" id="resultsList">	
+						</ul>
+					</div>
+					<div class="col-xs-12">
+						<button type="button" id="moreResultsButton" class="btn btn-info hidden">More results</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="footer" class="col-xs-12 navbar-fixed-bottom">
+			<hr id="footerHR">
+			<p>Created by <strong>Marjanus</strong></p>
+		</div>	
+			
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		<script src="script/weatherApp.js"></script>
+	</body>
+</html>
