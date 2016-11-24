@@ -1,6 +1,5 @@
  $(function(){
 
-
 	var $cityInput = $(".form-group").find("#cityInput");
 	var $countryInput = $(".form-group").find("#countryInput");
 	var $submitButton = $(".form-group").find("#submitButton");
@@ -10,6 +9,7 @@
 	// divs that are used to store forecast results from API requests
 	var $forecastResults = $("#forecastResults").find("#resultsList");
 	var $currentWeather = $("#currentWeatherDiv").find("#currentWeather");
+	var $forecastText = $(".weatherForecast").find("#forecastText");
 
 	var celsiusSymbol = "&deg;C";
 	var forecastLayout = "col-md-3 col-sm-4 col-xs-6 forecastItem";
@@ -18,8 +18,9 @@
 	var shortTermForecastItems = 8, longTermForecastItems = 20;
 
 	// on load, app shows current weather in the random city
-	var randomLocations = [["UK", "London"], ["Germany", "Berlin"], ["Lithuania", "Vilnius"], ["USA", "NewYork"], ["Hong Kong", "Hong Kong"],
-		["Brazil", "Rio"], ["Japan", "Tokyo"], ["Morocco", "Casablanca"], ["Russia", "Murmansk"], ["Russia", "Moscow" ]];
+	var randomLocations = [["United Kingdom", "London"], ["Germany", "Berlin"], ["Lithuania", "Vilnius"], ["New York", "New York"],
+		["Brazil", "Rio de Janeiro"], ["Japan", "Tokyo"], ["Morocco", "Casablanca"], ["Russia", "Murmansk"], 
+		["Russia", "Moscow" ]];
 
 	var randomLocation = randomLocations[Math.floor(Math.random() * randomLocations.length)];
 
@@ -48,91 +49,108 @@
 	};
 	
 
-	// initializes API request for a random city
+	// initializes API request on page load for a random city
 	$.ajax({
 
-			url: currentURL + randomLocation[0] + "/" + randomLocation[1] + ".json",
-			dataType: "jsonp",
-			success: function(result){
+		url: currentURL + randomLocation[0] + "/" + randomLocation[1] + ".json",
+		dataType: "jsonp",
+		success: function(result){
+			$currentWeather.empty();
+			storeCurrentWeatherData(result);
 
-				$currentWeather.empty();
-				storeCurrentWeatherData(result);
-		
-				$currentWeather.html(
-					"<h3>" + currentWeather.name + "</h3>"
-					+ currentWeather.tempCel  + " " + celsiusSymbol  
-					+ "<br /><img src='" + currentWeather.icon + "'> <br />" 
-					+ currentWeather.weather
-					);	
-			},
-			error: function(){
-				$currentWeather.html(
-					"<p>Failed to load current weather in a random location.</p>"
-					);
-			}
+			$currentWeather.html(
+				"<h3>" + currentWeather.name + "</h3>"
+				+ currentWeather.tempCel  + " " + celsiusSymbol  
+				+ "<br /><img src='" + currentWeather.icon + "'> <br />" 
+				+ currentWeather.weather
+				);	
+		},
+		error: function(){
+			$currentWeather.html(
+				"<p>Failed to load current weather in a random location.</p>"
+				);
+		}
 	});
 
+
+	var requestError = function(){
+		$forecastText.empty();
+		$forecastResults.html("<p>Forecast failed to gather weather forecast. Please check your spelling and try again.</p>");
+		$currentWeather.html( "<p>Failed to load current weather in provided location. Please check if the city name was correct.</p>");
+	};
 	
+
 	$submitButton.on("click", function(){
 
 		var city = $cityInput.val().replace(" ", "");
 		var country = $countryInput.val().replace(" ", ""); 
 
-		// if no city name is provided, user will be notified by changing input's field border colour
+		// if city or country names aren't provided, user will be notified by a changed input's field colour
 		if (city.length === 0){
-			$cityInput.css("border-color", "red");
-		}	else {
-			$cityInput.css("border-color", "#7A7D8E");
+			$cityInput.css("background-color", "#EB513F");
 		}
 
+		if (country.length === 0) {
+			$countryInput.css("background-color", "#EB513F");
+		}
 
-		$.ajax({
-			url: forecastURL + country + "/" + city + ".json",
-			dataType: "jsonp",
-			success: function(result){
-				
-				$moreResultsButton.removeClass("hidden");
-				// prevents footer from obstructing moreResultsButton
-				$("#footer").removeClass("navbar-fixed-bottom");
+		if (city.length > 0 && country.length > 0){
 
-				$forecastResults.empty();
-				$("#forecastText").empty();
-				$currentWeather.empty();
+			$cityInput.css("background-color", "#FFF");
+			$countryInput.css("background-color", "#FFF");
 
-				storeCurrentWeatherData(result);
-				storeForecastData(result);
-				storeLongTermData(result);
-				
-				$currentWeather.html(
-					"<h3>" + currentWeather.name + "</h3>"
-					+ currentWeather.tempCel  + " " + celsiusSymbol 
-					+ "<br /><img src='" + currentWeather.icon + "'> <br />" 
-					+ currentWeather.weather
-				);
-				
-				var httpsIconUrl = "";
+			$.ajax({
+				url: forecastURL + country + "/" + city + ".json",
+				dataType: "jsonp",
+				success: function(result){
+					
+					// if location was found in Weather Underground database
+					if (result.current_observation){
 
-				// shows short term forecast
-				for ( var i = 0; i < shortTermForecastItems; i++ ){
+						$moreResultsButton.removeClass("hidden");
+						// prevents footer from obstructing moreResultsButton
+						$("#footer").removeClass("navbar-fixed-bottom");
 
-					httpsIconUrl = "https" + shortTermForecast.resultsBase[i]["icon_url"].slice(4);
+						$forecastResults.empty();
+						$forecastText.empty();
+						$currentWeather.empty();
 
-					$forecastResults.append(
-						"<li class='" + forecastLayout + "'><strong>" 	
-						+ shortTermForecast.name + "</strong><br />" 
-						+ shortTermForecast.dayName[i]["title"]
-						+ "<br /><img src='" + httpsIconUrl + "'>"
-						+ "<br />High:"  + shortTermForecast.resultsBase[i]["high"]["celsius"] + celsiusSymbol 
-						+ "<br />Low:" + shortTermForecast.resultsBase[i]["low"]["celsius"] + celsiusSymbol + "</li>" 
-					);
+						storeCurrentWeatherData(result);
+						storeForecastData(result);
+						storeLongTermData(result);
+						
+						$currentWeather.html(
+							"<h3>" + currentWeather.name + "</h3>"
+							+ currentWeather.tempCel  + " " + celsiusSymbol 
+							+ "<br /><img src='" + currentWeather.icon + "'> <br />" 
+							+ currentWeather.weather
+						);
+						
+						var httpsIconUrl = "";
+
+						// shows short term forecast
+						for ( var i = 0; i < shortTermForecastItems; i++ ){
+
+							httpsIconUrl = "https" + shortTermForecast.resultsBase[i]["icon_url"].slice(4);
+
+							$forecastResults.append(
+								"<li class='" + forecastLayout + "'><strong>" 	
+								+ shortTermForecast.name + "</strong><br />" 
+								+ shortTermForecast.dayName[i]["title"]
+								+ "<br /><img src='" + httpsIconUrl + "'>"
+								+ "<br />High:"  + shortTermForecast.resultsBase[i]["high"]["celsius"] + celsiusSymbol 
+								+ "<br />Low:" + shortTermForecast.resultsBase[i]["low"]["celsius"] + celsiusSymbol + "</li>" 
+							);
+						}
+					} else {
+						requestError();
+					}
+				}, 
+				error: function(){
+					requestError();
 				}
-			}, 
-			error: function(){
-				$("#forecastText").empty();
-				$forecastResults.html("<p>Forecast failed to gather weather forecast. Please check your spelling and try again.</p>");
-				$currentWeather.html( "<p>Failed to load current weather in provided location. Please check if the city name was correct.</p>");	
-			}
-		});
+			});
+		}
 	});
 
 
@@ -184,7 +202,7 @@
 				+ longTermForecast.dayName[i]["title"] 
 				+ "<br /><img src='" + httpsIconUrl + "'><br />"
 				+ temperature + celsiusSymbol + "</li>"
-				);
+			);
 		}
 	});
 });
